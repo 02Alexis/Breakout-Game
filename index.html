@@ -1,0 +1,149 @@
+<title>Breackout game</title>
+
+<style>
+  body {
+    background-color: #111;
+  }
+
+  canvas {
+    border: 4px solid #fff;
+    border-bottom: transparent;
+    background: #000;
+    margin: 0 auto;
+    display: block;
+  }
+</style>
+
+<canvas> </canvas>
+
+<script>
+  // recuperamos la etiqueta canvas
+  const canvas = document.querySelector("canvas");
+  // dibujar en 2d
+  const ctx = canvas.getContext("2d");
+
+  // resolucion del canvas
+  canvas.width = 448;
+  canvas.height = 400;
+
+  /* Variables de la pelota */
+  const sizeBall = 4;
+  // posiciond e la pelota
+  let x = canvas.width / 2;
+  let y = canvas.height - 30;
+  // Velocidad de la pelota
+  let dx = 3;
+  let dy = -3;
+
+  /* Variables de la paleta */
+  const palletHeight = 10;
+  const palletWidth = 50;
+
+  let palletX = (canvas.width - palletWidth) / 2;
+  let palletY = canvas.height - palletHeight - 10;
+
+  let rightPressed = false;
+  let leftPressed = false;
+
+  const PALLET_SENSITIVITY = 8;
+
+  function drawBall() {
+    ctx.beginPath();
+    ctx.arc(x, y, sizeBall, 0, Math.PI * 2);
+    ctx.fillStyle = "Green";
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drwaPallet() {
+    ctx.fillStyle = "#09f";
+    ctx.fillRect(palletX, palletY, palletWidth, palletHeight);
+  }
+  function drwaSlug() {}
+
+  function deteccionColision() {}
+  function movimientoPelota() {
+    // rebote de la pelota laterales
+    if (x + dx > canvas.width - sizeBall || x + dx < sizeBall) {
+      dx = -dx;
+    }
+    // rebotar arriba
+    if (y + dy < sizeBall) {
+      dy = -dy;
+    }
+
+    // if (y + dy > canvas.height - sizeBall) {
+    //     console.log("Gamer Over");
+    //     document.location.reload()
+    // }
+    x += dx;
+    y += dy;
+  }
+  function movimientoPallet() {
+    if (rightPressed && palletX < canvas.width - palletWidth) {
+      palletX += PALLET_SENSITIVITY;
+    } else if (leftPressed && palletX > 0) {
+      palletX -= PALLET_SENSITIVITY;
+    }
+  }
+
+  function cleanCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function initEvents() {
+    document.addEventListener("keydown", keyDownHandler);
+    document.addEventListener("keyup", keyUpHandler);
+
+    function keyDownHandler(event) {
+      const { key } = event;
+      if (
+        key === "Right" ||
+        key === "ArrowRight" ||
+        key.toLowerCase() === "d"
+      ) {
+        rightPressed = true;
+      } else if (
+        key === "Left" ||
+        key === "ArrowLeft" ||
+        key.toLowerCase() === "a"
+      ) {
+        leftPressed = true;
+      }
+    }
+
+    function keyUpHandler(event) {
+      const { key } = event;
+      if (
+        key === "Right" ||
+        key === "ArrowRight" ||
+        key.toLowerCase() === "d"
+      ) {
+        rightPressed = false;
+      } else if (
+        key === "Left" ||
+        key === "ArrowLeft" ||
+        key.toLowerCase() === "a"
+      ) {
+        leftPressed = false;
+      }
+    }
+  }
+
+  function draw() {
+    cleanCanvas();
+    // draw elements
+    drawBall();
+    drwaPallet();
+    drwaSlug();
+
+    // Colisiones y elementos
+    deteccionColision();
+    movimientoPelota();
+    movimientoPallet();
+
+    window.requestAnimationFrame(draw);
+  }
+  draw();
+  initEvents();
+</script>
