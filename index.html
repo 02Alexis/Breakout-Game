@@ -62,8 +62,28 @@
   const slugOffSetLeft = 30;
   const slugs = [];
 
+  const SLUG_STATUS = {
+    ACTIVE: 1,
+    DEACTIVE: 0,
+  };
+
   for (let c = 0; c < slugColumn; c++) {
     slugs[c] = [];
+    for (let r = 0; r < slugRow; r++) {
+      // calcular la posicion del ladrillo
+      const slugX = c * (slugWidth + slugPadding) + slugOffSetLeft;
+      const slugY = r * (slugHeight + slugPadding) + slugOffSetTop;
+
+      // asignar color aleatorio
+      const random = Math.floor(Math.random() * 8);
+      // guardar la info de cada ladrillo
+      slugs[c][r] = {
+        x: slugX,
+        y: slugY,
+        status: SLUG_STATUS.ACTIVE,
+        color: random,
+      };
+    }
   }
 
   const PALLET_SENSITIVITY = 8;
@@ -90,7 +110,20 @@
     );
   }
 
-  function drwaSlug() {}
+  function drwaSlug() {
+    for (let c = 0; c < slugColumn; c++) {
+      for (let r = 0; r < slugRow; r++) {
+        const currentSlug = slugs[c][r];
+        if (currentSlug.status === SLUG_STATUS.DEACTIVE) {
+          continue;
+
+          ctx.fillStyle = "yellow";
+          ctx.rect(currentSlug.x, currentSlug.y, slugWidth, slugHeight);
+          ctx.fill();
+        }
+      }
+    }
+  }
 
   function deteccionColision() {}
 
