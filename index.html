@@ -55,11 +55,11 @@
   /* variables de los ladrillos */
   const slugRow = 6;
   const slugColumn = 13;
-  const slugWidth = 30;
-  const slugHeight = 14;
-  const slugPadding = 2;
+  const slugWidth = 32;
+  const slugHeight = 16;
+  const slugPadding = 0;
   const slugOffSetTop = 80;
-  const slugOffSetLeft = 30;
+  const slugOffSetLeft = 16;
   const slugs = [];
 
   const SLUG_STATUS = {
@@ -114,18 +114,43 @@
     for (let c = 0; c < slugColumn; c++) {
       for (let r = 0; r < slugRow; r++) {
         const currentSlug = slugs[c][r];
-        if (currentSlug.status === SLUG_STATUS.DEACTIVE) {
-          continue;
+        if (currentSlug.status === SLUG_STATUS.DEACTIVE) continue;
 
-          ctx.fillStyle = "yellow";
-          ctx.rect(currentSlug.x, currentSlug.y, slugWidth, slugHeight);
-          ctx.fill();
-        }
+        const clipX = currentSlug.color * 32;
+        ctx.drawImage(
+          $slug,
+          clipX,
+          0,
+          slugWidth,
+          slugHeight,
+          currentSlug.x,
+          currentSlug.y,
+          slugWidth,
+          slugHeight
+        );
       }
     }
   }
 
-  function deteccionColision() {}
+  function deteccionColision() {
+    for (let c = 0; c < slugColumn; c++) {
+      for (let r = 0; r < slugRow; r++) {
+        const currentSlug = slugs[c][r];
+        if (currentSlug.status === SLUG_STATUS.DEACTIVE) continue;
+
+        const isBallSameXAsSlug =
+          x > currentSlug.x && x < currentSlug.x + slugWidth;
+
+        const isBallSameYAsSlug =
+          y > currentSlug.y && y < currentSlug.y + slugWidth;
+
+        if (isBallSameXAsSlug && isBallSameYAsSlug) {
+          dy = -dy;
+          currentSlug.status = SLUG_STATUS.DEACTIVE;
+        }
+      }
+    }
+  }
 
   function movimientoPelota() {
     // rebote de la pelota laterales
